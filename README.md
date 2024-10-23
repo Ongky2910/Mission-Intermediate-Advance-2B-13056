@@ -12,3 +12,4 @@ Currently, two official plugins are available:
 # react-JS
 # react-JS
 # Mission-Intermediate-1-FE-13056
+# Mission-Intermediate-FE-2B-13056
