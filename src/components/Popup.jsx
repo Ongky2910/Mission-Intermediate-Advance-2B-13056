@@ -43,7 +43,6 @@ const Popup = ({ series, isOpen, onClose }) => {
 
           {/* Icon plus */}
           <PiPlusCircleLight
-            onClick={handleAddToFavorites}
             style={{ position: "absolute", bottom: "36px", left: "150px", cursor: 'pointer' }}
             size="40px"
           />

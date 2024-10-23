@@ -9,8 +9,8 @@ import HoverPoster from "/src/components/common/HoverPoster";
 import Rating from "/src/components/common/Rating";
 
 
+// Komponen utama halaman mylist
 const MyList = (props) => {
-  console.log("Series props:", props);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [currentTrailerUrl, setCurrentTrailerUrl] = useState("");
   const [selectedSeries, setSelectedSeries] = useState(null);
@@ -368,28 +368,28 @@ const MyList = (props) => {
       <Category
         title="Film Persembahan Chill"
         items={topRated}
-        onOpenTrailer={handleOpenTrailer}   
+       
       />
       <Category
         title="Top Rating Film Hari Ini"
         items={topRated}
-        onOpenTrailer={handleOpenTrailer}     
+     
       />
 
       <Category
         title="Film Trending"
         items={trendingMovies}
-        onOpenTrailer={handleOpenTrailer}    
+  
       />
 
       <Category
         title="Rilis Baru"
         items={newReleases}
-        onOpenTrailer={handleOpenTrailer}   
+        
       />
 
       <Footer />
-
+     
       {selectedSeries && (
         <Popup
           series={selectedSeries}

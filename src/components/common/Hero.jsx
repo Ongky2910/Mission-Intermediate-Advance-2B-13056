@@ -34,9 +34,11 @@ const Hero = ({
       onClick={handleHeroClick}
     >
       <div className="mt-10 absolute inset-0 flex flex-col justify-center p-4 md:p-12 ">
+      <div className="hidden md:block absolute top-0 left-12 z-10">
         {showDropdown && (
-          <Dropdown options={options} onChange={onDropdownChange} className="hidden" />
+          <Dropdown options={options} onChange={onDropdownChange} />
         )}
+        </div>
 
         <h1 className="text-2xl md:text-4xl font-semibold mb-1 md:mb-2 line-clamp-2 md:line-clamp-none">{title}</h1>
         <p className="text-sm md:text-base font-light max-w-3xl text-left mb-4">{description}</p>

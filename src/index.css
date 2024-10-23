@@ -9,9 +9,8 @@
 
 .lato-light {
   font-family: "Lato", sans-serif;
-  font-weight: 200;
+  font-weight: 300;
 }
-
 
 .lato-regular {
   font-family: "Lato", sans-serif;
@@ -64,7 +63,6 @@ h2 {
   place-items: center;
 }
 
-
 button {
   border: 1px solid transparent;
   font-weight: 400;
@@ -77,6 +75,9 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.premium-flag {
+  z-index: 50;
+}
 
 .absolute {
   position: absolute;
@@ -95,7 +96,6 @@ button:focus-visible {
   left: 0; 
   right: 30px; 
   bottom: 10; 
- 
   display: flex; 
   align-items:center; 
   justify-content: center;
@@ -130,8 +130,8 @@ button:focus-visible {
   color: white;
   padding: 10px; 
   display: flex;
-  flex-direction: column; 
-  opacity: 0;
+  flex-direction: column;
+  opacity: 0; 
   transition: opacity 0.3s ease; 
   pointer-events: auto; 
 }
@@ -143,6 +143,7 @@ button:focus-visible {
 .play-button, .checklist-button {
 
 margin: 10px 10px 20px;
+
   color: white; 
 }
 
@@ -151,11 +152,14 @@ margin: 10px 10px 20px;
   flex-direction: column; 
 }
 
-
+.age-rating {
+  background-color: gray; 
+  padding: 5px; 
+  border-radius: 5px; 
+  margin-bottom: 5px; 
+}
 
 .genre, .total-episodes {
   font-size: 0.9rem; 
   color: lightgray; 
 }
-
-

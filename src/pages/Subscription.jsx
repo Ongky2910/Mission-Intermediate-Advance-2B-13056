@@ -4,8 +4,9 @@ import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import { MdDownload } from "react-icons/md";
 import { IoCheckmark } from "react-icons/io5";
+import { useSubscription } from '../components/SubscriptionContext';
 
-// Sample logos for the benefits (replace with actual logo paths)
+// Sample logos utk keuntungan 
 const logos = {
   noAds: "src/assets/Vector (4).png",
   exclusiveContent: "src/assets/Vector (6).png",
@@ -17,16 +18,18 @@ const logos = {
 const Subscription = ({ onSubscriptionUpdate }) => {
   const navigate = useNavigate();
   const [selectedPackage, setSelectedPackage] = useState("");
+  
 
   const handleSelectPackage = (packageType) => {
-    setSelectedPackage(packageType);
-    navigate("/payment", { state: { packageType, onSubscriptionUpdate } });
-  };
+    navigate("/payment", { state: { packageType } });
+};
 
-  const handleSubscribe = (type) => {
+
+
+  const handleSubscribe = (packageType) => {
     // Simulate payment processing
-    // After payment is successful, update the subscription status
-    onSubscriptionUpdate(type); // Pass the subscription type
+    // Not finished
+    onSubscriptionUpdate(packageType); 
     navigate("/profile"); // Redirect to profile
   };
 
@@ -34,7 +37,7 @@ const Subscription = ({ onSubscriptionUpdate }) => {
     <div className="min-h-screen bg-gray-input shadow-lg">
       <Navbar />
 
-      {/* Why Should I Subscribe Section */}
+      {/* Section Why */}
       <div className="mb-8 text-center text-white">
         <h3 className="text-xl font-normal text-white mt-2 md:mt-12 mb-5 md:mb-10">
           Kenapa Harus Berlangganan?
@@ -42,7 +45,7 @@ const Subscription = ({ onSubscriptionUpdate }) => {
 
         {/* Benefits Section */}
         <div className="grid grid-cols-2 gap-4 px-10 md:grid-cols-3 sm:grid-cols-2">
-          {/* First Row with 3 Benefits */}
+       
           <div className="flex flex-col items-center">
             <MdDownload color="white" size={30} />
             <span className="mb-5 mt-4">Download Konten Pilihan</span>
@@ -60,7 +63,7 @@ const Subscription = ({ onSubscriptionUpdate }) => {
             <span>Tonton Semua Konten</span>
           </div>
 
-          {/* Second Row with 3 Benefits */}
+        
           <div className="flex flex-col items-center ">
             <img
               src={logos.fourkeyResolution}
@@ -88,7 +91,7 @@ const Subscription = ({ onSubscriptionUpdate }) => {
         </div>
       </div>
       <div className="flex flex-col md:flex-row justify-center gap-6">
-      {/* Subscription Packages */}
+      {/* Pilihan Paket Berlangganan */}
       <div className="bg-gray-800 w-full py-12 md:py-12 md:-mx-12 text-center text-white">
         <h2 className="text-3xl font-semibold text-white mb-2">
           Pilih Paketmu
@@ -97,7 +100,7 @@ const Subscription = ({ onSubscriptionUpdate }) => {
           Temukan paket sesuai kebutuhanmu!
         </p>
         <div className="flex flex-col md:flex-row justify-center md:gap-0 gap-6">
-          {/* Example Subscription Packages */}
+          {/* Example Card*/}
           <div className="bg-gradient-blue rounded-xl p-6 text-left shadow-lg w-72 mx-auto md:w-30 transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl ">
             <h3 className="text-lg font-normal bg-gray-700 rounded-3xl py-1 w-1/2 md:w-2/3 text-center px-4 mb-4">
               Individual

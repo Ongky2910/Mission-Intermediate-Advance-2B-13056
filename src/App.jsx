@@ -8,10 +8,12 @@ import PremiumProfile from "./pages/PremiumProfile";
 import MyList from "./pages/MyList";
 import Subscription from "./pages/Subscription";
 import Payment from "./pages/Payment";
+import { SubscriptionProvider } from './components/SubscriptionContext'
 import "./index.css";
 
 const App = () => {
   return (
+    <SubscriptionProvider>
     <Router>
       <Routes>
         <Route path="/" element={<LoginForm />} />
@@ -25,6 +27,7 @@ const App = () => {
         <Route path="/mylist" element={<MyList />} />  
       </Routes>
     </Router>
+    </SubscriptionProvider>
   );
 };
 

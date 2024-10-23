@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import clsx from "clsx";
+import Rating from "./Rating";
+import Flag from "./Flag";
+
 
 const Category = ({
   title,
@@ -7,33 +10,39 @@ const Category = ({
   onOpenTrailer,
   handleMouseEnter,
   handleMouseLeave,
+  itemsToShow = 1,
   className,
 }) => {
-  {
-    /* Logika perpindahan slide */
-  }
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsToShowDesktop = 5;
   const itemsToShowMobile = 1;
   const totalItems = items.length;
+  
+
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + itemsToShow) % items.length);
+    setCurrentIndex((prevIndex) => {
+      const newIndex = prevIndex + itemsToShow;
+      return newIndex >= totalItems ? 0 : newIndex;
+    });
   };
 
   const prevSlide = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - itemsToShow + items.length) % items.length
-    );
+    setCurrentIndex((prevIndex) => {
+      const newIndex = prevIndex - itemsToShow;
+      return newIndex < 0 ? totalItems - itemsToShow : newIndex;
+    });
   };
 
   if (!items || items.length === 0) {
     return null;
   }
 
+
   return (
-    <section className="py-2 bg-gray-input relative">
-      <h2 className="text-2xl font-medium mb-4 md:mb-3 md:mt-10  mx-4 md:mx-10 lg:mx-20">
+    <section className={`py-2 bg-gray-input relative ${className}`}>
+      <h2 className="text-2xl font-medium mb-4 md:mb-3 md:mt-10 mx-4 md:mx-10 lg:mx-20">
         {title}
       </h2>
 
@@ -45,18 +54,11 @@ const Category = ({
           &lt;
         </button>
 
-        {/* Logika transisi yg lebih smooth utk better UX */}
         <div className="overflow-hidden">
           <div
             className="flex transition-transform duration-300"
             style={{
-              transform: `translateX(-${
-                currentIndex *
-                (100 /
-                  (window.innerWidth < 768
-                    ? itemsToShowMobile
-                    : itemsToShowDesktop))
-              }%)`,
+              transform: `translateX(-${(currentIndex * (100 / (window.innerWidth < 768 ? itemsToShowMobile : itemsToShowDesktop)))}%)`,
             }}
           >
             {items.map((item) => (
@@ -67,16 +69,13 @@ const Category = ({
                   window.innerWidth < 768 ? "w-full" : "w-[20%]"
                 )}
                 onMouseEnter={() => handleMouseEnter(item)}
-                onMouseLeave={handleMouseLeave}
+                onMouseLeave= {handleMouseLeave}
                 onClick={() => onOpenTrailer(item.trailerUrl, item)}
               >
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full rounded object-cover cursor-pointer "
-=======
                   className="w-full h-full rounded object-cover cursor-pointer"
->>>>>>> 5e9b1d9db68db76c93c94cd1a8b386cd473e8ba1
                 />
                 <div className="flex justify-between md:flex-none items-center">
                   <h3 className="text-white">{item.title}</h3>
@@ -87,8 +86,7 @@ const Category = ({
                   )}
                 </div>
 
-                {/*Label flag top 10, new episode & premium */}
-                <div className="absolute md:top-6 top-12 font-extralight p-11 md:right-0 right-5 ">
+                <div className="absolute md:top-6 top-12 font-extralight p-11 md:right-0 right-5">
                   {item.isTop10 && (
                     <Flag
                       label="Top 10"
@@ -102,7 +100,7 @@ const Category = ({
                   <Flag
                     label="Premium"
                     type="premium"
-                    className="text-xl font-semibold py-4 px-4 md:text-xs md:py-1  md:px-2"
+                    className="text-xl font-semibold py-4 px-4 md:text-xs md:py-1 md:px-2"
                   />
                 )}
                 {item.isNewEpisode && (

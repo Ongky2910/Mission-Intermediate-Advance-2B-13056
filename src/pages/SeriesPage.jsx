@@ -7,7 +7,8 @@ import Footer from "../components/common/Footer";
 import Popup from "../components/Popup";
 import HoverPoster from "/src/components/common/HoverPoster";
 import Rating from "/src/components/common/Rating";
-import backgroundImage from '../assets/Rectangle 9 (1).png';
+import backgroundImage from "../assets/Rectangle 9 (1).png";
+
 
 // Komponen utama halaman series
 const Series = (props) => {
@@ -20,34 +21,22 @@ const Series = (props) => {
   const [series, setSeries] = useState([]);
   const [newSeriesRating, setNewSeriesRating] = useState(0);
 
-  // Fungsi utk membuka popup trailer
-  const handleOpenPopup = (trailerUrl) => {
-    const autoplayUrl = trailerUrl.includes('?') ? `${trailerUrl}&autoplay=1` : `${trailerUrl}?autoplay=1`;
-    setCurrentTrailerUrl(autoplayUrl);
-    setSelectedSeries(series); 
-    setIsTrailerOpen(true);
-  };
-// Fungsi menutup popup
-  const handleClosePopup = () => {
-    setIsTrailerOpen(false);
-    setCurrentTrailerUrl("");
-    setSelectedSeries(null); 
-  };
-
   // Fungsi memutar trailer (unfinished)
   const handleOpenTrailer = (trailerUrl, series) => {
-    const autoplayUrl = trailerUrl.includes('?') ? `${trailerUrl}&autoplay=1` : `${trailerUrl}?autoplay=1`;
+    const autoplayUrl = trailerUrl.includes("?")
+      ? `${trailerUrl}&autoplay=1`
+      : `${trailerUrl}?autoplay=1`;
     setCurrentTrailerUrl(autoplayUrl);
     setSelectedSeries(series);
     setIsTrailerOpen(true);
   };
-// Fungsi menutup trailer
+  // Fungsi menutup trailer
   const handleCloseTrailer = (trailerUrl, series) => {
     setIsTrailerOpen(false);
     setCurrentTrailerUrl("");
   };
 
-// Fungsi utk mengubah genre yg dipilih
+  // Fungsi utk mengubah genre yg dipilih
   const handleDropdownChange = (e) => {
     setSelectedGenre(e.target.value);
   };
@@ -55,13 +44,13 @@ const Series = (props) => {
   // Fungsi untuk menangani hover pd item
   const handleMouseEnter = (item) => {
     setHoveredItemId(item.id);
-  };
+};
 
   const handleMouseLeave = () => {
     setHoveredItemId(null);
   };
-  
-// Daftar genre yg tersedia dlm dropdwon
+
+  // Daftar genre yg tersedia dlm dropdwon
   const options = [
     { value: "Aksi", label: "Aksi" },
     { value: "KDrama", label: "KDrama" },
@@ -100,61 +89,70 @@ const Series = (props) => {
         {
           title: "Episode 1",
           duration: "49m",
-          description: "Arisu dan teman-temannya menemukan kamar mandi umum untuk bersembunyi dari polisi. Namun saat mereka keluar, jalanan Tokyo tiba-tiba kosong sama sekali.",
+          description:
+            "Arisu dan teman-temannya menemukan kamar mandi umum untuk bersembunyi dari polisi. Namun saat mereka keluar, jalanan Tokyo tiba-tiba kosong sama sekali.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/alice_in_borderland_cast-f8b0233.jpg",
         },
         {
           title: "Episode 2",
           duration: "51m",
-          description: "Meninggalkan Chota yang terluka, Arisu dan Karube keluar untuk bereksplorasi. Saat tiba di sebuah apartemen luas, permainan kejar-kejaran berbahaya sudah menanti mereka.",
+          description:
+            "Meninggalkan Chota yang terluka, Arisu dan Karube keluar untuk bereksplorasi. Saat tiba di sebuah apartemen luas, permainan kejar-kejaran berbahaya sudah menanti mereka.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceepisode2.jpg",
         },
         {
           title: "Episode 3",
           duration: "43m",
-          description: "Visa Chota dan visa Shibuki hampir kedaluwarsa. Empat sekawan itu pun masuk ke taman botani luas di Shinjuku, lalu mengikuti permainan pengkhianatan yang kejam di sana.",
+          description:
+            "Visa Chota dan visa Shibuki hampir kedaluwarsa. Empat sekawan itu pun masuk ke taman botani luas di Shinjuku, lalu mengikuti permainan pengkhianatan yang kejam di sana.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps3.jpg",
         },
         {
           title: "Episode 4",
           duration: "48m",
-          description: "Arisu dilanda rasa bersalah dan hampir menyerah, tetapi Usagi mendorongnya untuk terus berjuang. Selanjutnya adalah permainan ketahanan di sebuah jalan raya bawah tanah.",
+          description:
+            "Arisu dilanda rasa bersalah dan hampir menyerah, tetapi Usagi mendorongnya untuk terus berjuang. Selanjutnya adalah permainan ketahanan di sebuah jalan raya bawah tanah.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps4.jpg",
         },
         {
           title: "Episode 5",
           duration: "53m",
-          description: "Setelah Arisu dan Usagi berhasil tiba di Pantai, penguasa dari tempat berlindung utopia ini memaksa mereka untuk membantu mengumpulkan kartu bermain yang tersisa.",
+          description:
+            "Setelah Arisu dan Usagi berhasil tiba di Pantai, penguasa dari tempat berlindung utopia ini memaksa mereka untuk membantu mengumpulkan kartu bermain yang tersisa.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps5.jpg",
         },
         {
           title: "Episode 6",
           duration: "42m",
-          description: "Chishiya mengajak Arisu dan Usagi untuk membantunya mengubah status quo. Sebuah kejadian tak terduga mengguncang dinamika kekuasaan Pantai yang rapuh.",
+          description:
+            "Chishiya mengajak Arisu dan Usagi untuk membantunya mengubah status quo. Sebuah kejadian tak terduga mengguncang dinamika kekuasaan Pantai yang rapuh.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps6.jpg",
         },
         {
           title: "Episode 7",
           duration: "49m",
-          description: "Awalnya tempat berlindung, kini Pantai menjadi arena permainan selanjutnya: perburuan penyihir sengit, yang membuat semua orang saling bertarung dalam pertempuran keji.",
+          description:
+            "Awalnya tempat berlindung, kini Pantai menjadi arena permainan selanjutnya: perburuan penyihir sengit, yang membuat semua orang saling bertarung dalam pertempuran keji.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps7.jpg",
         },
         {
           title: "Episode 8",
           duration: "54m",
-          description: "Ketegangan di dalam resor mencapai puncaknya. Dengan waktu permainan yang hampir habis, mereka yang bertahan hidup kini menghadapi masa depan yang tak pasti.",
+          description:
+            "Ketegangan di dalam resor mencapai puncaknya. Dengan waktu permainan yang hampir habis, mereka yang bertahan hidup kini menghadapi masa depan yang tak pasti.",
           trailerUrl: "https://www.youtube.com/embed/episode1_trailer",
           image: "src/assets/aliceeps8.jpg",
-        },  
+        },
       ],
     },
+
     // Data series "Ted Lasso"
     {
       id: 2,
@@ -220,6 +218,7 @@ const Series = (props) => {
         },
       ],
     },
+
     // Data dari series "All of us are Dead"
     {
       id: 3,
@@ -234,41 +233,44 @@ const Series = (props) => {
       description:
         "Sebuah SMA menjadi titik nol merebaknya wabah virus zombi. Para murid yang terperangkap pun harus berjuang untuk kabur jika tak mau terinfeksi dan berubah menjadi buas.",
       genre: ["Horor", "Thriler", "Suicide"],
-      cast: ["Park Ji-hu,Yoon Chan-young,Cho Yi-hyun",
-      ],
+      cast: ["Park Ji-hu,Yoon Chan-young,Cho Yi-hyun"],
       filmmaker: "Lee JQ,Chun Sung-il,Kim Nam-su",
       episodes: [
         {
           title: "∙ Episode #1.1",
           duration: "66 min",
-          description: "Di lab sains Lee Byeong-chan, seorang siswa terkena gigitan yang tampaknya tidak berbahaya. Tak lama kemudian, wabah yang menyebar cepat menggenangi sekolah dengan darah.",
+          description:
+            "Di lab sains Lee Byeong-chan, seorang siswa terkena gigitan yang tampaknya tidak berbahaya. Tak lama kemudian, wabah yang menyebar cepat menggenangi sekolah dengan darah.",
           trailerUrl: "https://www.youtube.com/embed/episode_trailer1",
           image: "src/assets/image 223 (1).png",
         },
         {
           title: "∙ Episode #1.2",
           duration: "70 min",
-          description: "Orang yang terinfeksi berkembang biak dalam jumlah besar. Guna bertahan hidup, Nam On-jo & Lee Cheong-san berlindung bersama orang lain di dalam kelas, tetapi tidak lama.",
+          description:
+            "Orang yang terinfeksi berkembang biak dalam jumlah besar. Guna bertahan hidup, Nam On-jo & Lee Cheong-san berlindung bersama orang lain di dalam kelas, tetapi tidak lama.",
           trailerUrl: "https://www.youtube.com/embed/episode_trailer1",
           image: "src/assets/allofusaredeadeps2.webp",
         },
         {
           title: "∙ Episode #1.3",
           duration: "62 min",
-          description: "Ketika salah satu anggota kelompok tergores saat melawan zombi, Lee Na-yeon mendesak agar mereka mengusirnya. Di luar, virus menjalar di seluruh kota.",
+          description:
+            "Ketika salah satu anggota kelompok tergores saat melawan zombi, Lee Na-yeon mendesak agar mereka mengusirnya. Di luar, virus menjalar di seluruh kota.",
           trailerUrl: "https://www.youtube.com/embed/episode_trailer1",
           image: "src/assets/allofusaredeadeps3.webp",
         },
         {
           title: "∙ Episode #1.4",
           duration: "67 min",
-          description: "Karena membutuhkan ponsel, dua siswa melakukan perjalanan berisiko ke kantor guru. Byeong-chan menyampaikan informasi penting kepada Detektif Song Jae-ik.",
+          description:
+            "Karena membutuhkan ponsel, dua siswa melakukan perjalanan berisiko ke kantor guru. Byeong-chan menyampaikan informasi penting kepada Detektif Song Jae-ik.",
           trailerUrl: "https://www.youtube.com/embed/episode_trailer1",
           image: "src/assets/allofusaredeadeps4.jpg",
         },
       ],
     },
-    
+
     {
       id: 4,
       title: "The Tomorrow War",
@@ -286,7 +288,7 @@ const Series = (props) => {
       title: "Blue Lock",
       image: "src/assets/image 219.png",
       isNewEpisode: true,
-      rating: 4.8
+      rating: 4.8,
     },
   ];
 
@@ -297,10 +299,10 @@ const Series = (props) => {
       image: "/src/assets/antman.jpg",
     },
     {
-    id: 6,
-    title: "Big Hero 6",
-    image: "src/assets/image 217 (1).png",
-  },
+      id: 6,
+      title: "Big Hero 6",
+      image: "src/assets/image 217 (1).png",
+    },
     {
       id: 7,
       title: "Oppenheimer",
@@ -321,7 +323,7 @@ const Series = (props) => {
       isNewEpisode: true,
       isTop10: true,
     },
-   
+
     {
       id: 10,
       title: "Peaky Blinders",
@@ -329,8 +331,7 @@ const Series = (props) => {
       isNewEpisode: true,
     },
 
-    { id: 11, title: "Interstellar", 
-      image: "src/assets/interstellarrr1.jpeg" },
+    { id: 11, title: "Interstellar", image: "src/assets/interstellarrr1.jpeg" },
     {
       id: 12,
       title: "Money Heist",
@@ -438,70 +439,38 @@ const Series = (props) => {
     ...newReleases,
   ];
 
-  return (
-    <div className="bg-stone-900 min-h-screen overflow-hidden text-white ">
+   return (
+    <div className="bg-stone-900 min-h-screen overflow-hidden text-white">
       <Navbar />
 
       <Hero
         title="Happiness"
-        description="Berlatar waktu masa depan, sebuah gedung apartemen bertingkat tinggi baru saja dibangun di kota besar. Gedung apartemen tersebut memiliki penghuni dari berbagai latar belakang, tetapi sebuah penyakit menular baru merebak. Karena wabah tersebut, apartemen bertingkat tinggi tersebut ditutup. Para penghuni berjuang untuk bertahan hidup, sambil dilanda ketakutan dan ketidakpercayaan terhadap orang lain.
-"
+        description="Berlatar waktu masa depan, sebuah gedung apartemen bertingkat tinggi baru saja dibangun di kota besar. Gedung apartemen tersebut memiliki penghuni dari berbagai latar belakang, tetapi sebuah penyakit menular baru merebak. Karena wabah tersebut, apartemen bertingkat tinggi tersebut ditutup. Para penghuni berjuang untuk bertahan hidup, sambil dilanda ketakutan dan ketidakpercayaan terhadap orang lain."
         options={options}
         onDropdownChange={handleDropdownChange}
         showDropdown={true}
         backgroundImage={backgroundImage}
-        onOpenPopup={(trailerUrl) => handleOpenPopup(trailerUrl, seriesData)} 
-        trailerUrl="https://www.youtube.com/watch?v=your_trailer_id"
       />
 
-{/* Menampilkan kategori untuk melanjutkan tonton series */}
+      {/* Menampilkan kategori untuk melanjutkan tonton series */}
       <Category
         title="Melanjutkan Tonton Series"
         items={continueWatching}
         onOpenTrailer={handleOpenTrailer}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
-        showRating={true} 
-    
+        showRating={true}
       />
-     
-     {/* Menampilkan kategori untuk series persembahan chill */}
-      <Category
-        title="Series Persembahan Chill"
-        items={topRated}
-    
-      />
-      <Category
-        title="Top Rating Series Hari Ini"
-        items={topRated}   
-      
-      />
-      <Category
-        title="Series Trending"
-        items={trendingMovies}
-      
-      />
-      <Category
-        title="Rilis Baru"
-        items={newReleases}
-     
-      />
+
+      {/* Menampilkan kategori untuk series persembahan chill */}
+      <Category title="Series Persembahan Chill" items={topRated} />
+      <Category title="Top Rating Series Hari Ini" items={topRated} />
+      <Category title="Series Trending" items={trendingMovies} />
+      <Category title="Rilis Baru" items={newReleases} />
 
       <Footer />
 
       {/* Menampilkan popup jika trailer dibuka */}
-      {isTrailerOpen && (
-        <Popup
-        series={selectedSeries}
-          isOpen={isTrailerOpen}
-          videoUrl={currentTrailerUrl}
-          onClose={handleClosePopup}
-          setCurrentTrailerUrl={setCurrentTrailerUrl}
-          setSelectedSeries={setSelectedSeries}
-          setIsTrailerOpen={setIsTrailerOpen}
-        />
-      )}
-
       {selectedSeries && (
         <Popup
           series={selectedSeries}
@@ -521,6 +490,7 @@ const Series = (props) => {
           />
         </div>
       )}
+
     </div>
   );
 };

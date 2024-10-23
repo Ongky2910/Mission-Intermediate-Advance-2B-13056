@@ -10,6 +10,8 @@ const HoverPoster = React.memo(
       return null;
     }
 
+    const item = series[0];
+    
     return (
       <div className="bg-gray-input cursor-pointer w-[300px] h-[360px] rounded-[20px] overflow-hidden transition-all duration-300 hover:opacity-100 hover:shadow-[0px_20px_48px_0px_rgba(255,255,255,0.1)] relative">
         {series.map((item) => (

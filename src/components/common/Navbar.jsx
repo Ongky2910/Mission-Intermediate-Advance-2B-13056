@@ -30,14 +30,14 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-gray-input py-2 mx-0 overflow-hidden ">
+    <nav className="bg-gray-input py-2 mx-0 ">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* Logo */}
           <Logo
             src="src/assets/Vector (1).png"
             alt="Chill Logo"
-            className="h-20 ml-4 md:ml-12" 
+            className="h-20 ml-4 text-white md:ml-12" 
             text="chill" 
           />
           {/* Link navigasi */}
@@ -55,11 +55,12 @@ const Navbar = () => {
         </div>
 
         {/* Genre Dropdown (di mobile) */}
-        <div className="md:hidden ">
+        <div className="md:hidden">
           <Dropdown
             options={genreOptions}
             onChange={(value) => console.log("Selected Genre:", value)}
             isMobile={true}
+           
           />
         </div>
 
