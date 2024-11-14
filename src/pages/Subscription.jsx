@@ -27,10 +27,8 @@ const Subscription = ({ onSubscriptionUpdate }) => {
 
 
   const handleSubscribe = (packageType) => {
-    // Simulate payment processing
-    // Not finished
     onSubscriptionUpdate(packageType); 
-    navigate("/profile"); // Redirect to profile
+    navigate("/profile"); // Beralih to profile
   };
 
   return (

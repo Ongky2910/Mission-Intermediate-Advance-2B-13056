@@ -1,0 +1,29 @@
+{
+    "payments": [
+      {
+        "id": 1,
+        "packageType": "Individual",
+        "price": 49990,
+        "paymentMethod": "Kartu Debit/Kredit",
+        "voucherCode": "",
+        "totalAmount": 52990
+      },
+      {
+        "id": 2,
+        "packageType": "Berdua",
+        "price": 79990,
+        "paymentMethod": "BCA Virtual Account",
+        "voucherCode": "100",
+        "totalAmount": 79990
+      },
+      {
+        "id": 3,
+        "packageType": "Keluarga",
+        "price": 159990,
+        "paymentMethod": "BCA Virtual Account",
+        "voucherCode": "100",
+        "totalAmount": 159990
+      }
+    ]
+  }
+  

@@ -26,13 +26,17 @@ const Payment = () => {
   const { handleSubscriptionUpdate } = useSubscription();
   const navigate = useNavigate();
   const location = useLocation();
-  const { packageType: initialPackageType } = location.state || { packageType: "Basic" };
+  const { packageType: initialPackageType } = location.state || {
+    packageType: "Basic",
+  };
 
-  // State initialization
+    // State untuk mengatur paket dan status pembayaran
   const [packageType, setPackageType] = useState(initialPackageType);
   const [paymentMethod, setPaymentMethod] = useState("Kartu Debit/Kredit");
   const [voucherCode, setVoucherCode] = useState("");
-  const [totalAmount, setTotalAmount] = useState(packageDetails[packageType]?.price || 0);
+  const [totalAmount, setTotalAmount] = useState(
+    packageDetails[packageType]?.price || 0
+  );
   const [adminFee] = useState(3000);
   const [discount, setDiscount] = useState(0);
 
@@ -42,15 +46,12 @@ const Payment = () => {
 
   const finalAmount = totalAmount + adminFee - discount;
 
-  const handlePayment = () => {
-    console.log("Processing payment...");
-    console.log("Package Type:", packageType);
-    console.log("Payment Method:", paymentMethod);
-    console.log("Voucher Code:", voucherCode);
-    console.log("Total Amount:", finalAmount);
-
-    handleSubscriptionUpdate(true, packageType);
-    navigate("/profile", { state: { isSubscribed: true } });
+   // data pembayaran
+   const paymentData = {
+    packageType,
+    paymentMethod,
+    totalAmount: finalAmount,
+    voucherCode,
   };
 
   const applyVoucher = () => {
@@ -58,6 +59,24 @@ const Payment = () => {
       setDiscount(100);
     }
   };
+
+
+  const handlePayment = async () => {
+    try {
+      console.log("Processing payment...");
+      console.log("Package Type:", packageType);
+      console.log("Payment Method:", paymentMethod);
+      console.log("Voucher Code:", voucherCode);
+      console.log("Total Amount:", finalAmount);
+
+      handleSubscriptionUpdate(true, packageType, "user@example.com", "username");
+      // Navigate to profile page with subscription status
+      navigate("/profile", { state: { isSubscribed: true, packageType  } });
+    } catch (error) {
+      console.error("Payment processing failed:", error);
+    }
+  };
+
 
   return (
     <div className="bg-gray-input min-h-screen text-white p-6">
@@ -107,10 +126,34 @@ const Payment = () => {
                   )}
                 </div>
                 <div className="flex items-center ml-1">
-                  <img src="src/assets/visalogo.svg" alt="Visa" width="30" height="30" style={{ margin: "0 5px" }} />
-                  <img src="src/assets/mastercard2.jpeg" alt="Mastercard" width="30" height="30" style={{ margin: "0 5px" }} />
-                  <img src="src/assets/jcblogo.jpeg" alt="JCB" width="30" height="20" style={{ margin: "0 5px" }} />
-                  <img src="src/assets/americanbank.png" alt="American Express" width="30" height="10" style={{ margin: "0 5px" }} />
+                  <img
+                    src="src/assets/visalogo.svg"
+                    alt="Visa"
+                    width="30"
+                    height="30"
+                    style={{ margin: "0 5px" }}
+                  />
+                  <img
+                    src="src/assets/mastercard2.jpeg"
+                    alt="Mastercard"
+                    width="30"
+                    height="30"
+                    style={{ margin: "0 5px" }}
+                  />
+                  <img
+                    src="src/assets/jcblogo.jpeg"
+                    alt="JCB"
+                    width="30"
+                    height="20"
+                    style={{ margin: "0 5px" }}
+                  />
+                  <img
+                    src="src/assets/americanbank.png"
+                    alt="American Express"
+                    width="30"
+                    height="10"
+                    style={{ margin: "0 5px" }}
+                  />
                   <span className="text-sm md:ml-2">Kartu Debit/Kredit</span>
                 </div>
               </div>
@@ -130,7 +173,13 @@ const Payment = () => {
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                   )}
                 </div>
-                <img src="src/assets/BCAlogo.webp" alt="BCA" width="30" height="30" className="mr-2" />
+                <img
+                  src="src/assets/BCAlogo.webp"
+                  alt="BCA"
+                  width="30"
+                  height="30"
+                  className="mr-2"
+                />
                 <span className="text-sm">BCA Virtual Account</span>
               </div>
             </div>
@@ -146,7 +195,10 @@ const Payment = () => {
                 className="flex-1 h-10 pl-4 bg-transparent text-white focus:outline-none"
                 placeholder="Masukkan kode voucher"
               />
-              <button onClick={applyVoucher} className="ml-2 bg-gray-600 text-white h-10 px-4 rounded-md hover:bg-gray-700">
+              <button
+                onClick={applyVoucher}
+                className="ml-2 bg-gray-600 text-white h-10 px-4 rounded-md hover:bg-gray-700"
+              >
                 Gunakan
               </button>
             </div>
@@ -168,7 +220,10 @@ const Payment = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <button onClick={handlePayment} className="md:mt-4 mb-12 md:mb-0 bg-blue-input hover:bg-blue-500 p-1 rounded-full w-full md:w-1/4">
+            <button
+              onClick={handlePayment}
+              className="md:mt-4 mb-12 md:mb-0 bg-blue-input hover:bg-blue-500 p-1 rounded-full w-full md:w-1/4"
+            >
               Bayar
             </button>
           </div>

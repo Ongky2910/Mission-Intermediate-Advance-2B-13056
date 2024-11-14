@@ -27,7 +27,7 @@ const Dropdown = ({ options, className, onChange }) => {
       {isOpen && (
         <div className={clsx(
           "absolute z-30 bg-gray-input rounded shadow-lg max-h-[400px] overflow-y-auto",
-          "w-[100px] md:w-[400px]"  // Full width
+          "w-[100px] md:w-[400px]"  
         )}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
             {options.map((option) => (
