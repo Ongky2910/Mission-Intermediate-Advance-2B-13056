@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL || 'https://default-api-url.com';
-console.log("API URL: ", apiUrl);
+console.log("Requesting URL:", `${apiUrl}/users`);
+
 
 // Hanya tampilkan log ini jika sedang dalam mode pengembangan (development)
 if (import.meta.env.MODE === 'development') {
-  console.log("API URL:", apiUrl);
+  console.log("Requesting URL:", `${apiUrl}/users`);
+
 }
 
 // Set up the axios instance with base URL

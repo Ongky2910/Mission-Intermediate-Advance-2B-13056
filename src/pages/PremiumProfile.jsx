@@ -38,7 +38,7 @@ const ProfileInput = React.forwardRef(
             value={value}
             onChange={setValue}
             name={name}
-            className={`block w-full p-3 rounded-md border border-gray-800 placeholder-transparent ${colorStyles[color]?.[variant]}`}
+            className={`block w-full p-3 text-gray-500 rounded-md border border-gray-800 placeholder-transparent ${colorStyles[color]?.[variant]}`}
             placeholder=" "
           />
           <div className="absolute right-2 cursor-pointer">
@@ -51,7 +51,6 @@ const ProfileInput = React.forwardRef(
 );
 
 // Daftar opsi avatar
-
 const avatarOptions = [
   "src/assets/27470334_7309681.jpg",
   "src/assets/avatar2.jpg",
@@ -127,109 +126,111 @@ const Profile = () => {
   ]);
   const [savedAccounts, setSavedAccounts] = useState([]); // Daftar akun yang disimpan
 
+    // Pastikan URL API tidak memiliki garis miring ganda
+    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
+
     // Validasi email menggunakan regex
     const validateEmail = (email) => {
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return regex.test(email);
     };
 
+    // Cleanup blob URL on component unmount or when avatar changes
+    useEffect(() => {
+      return () => {
+        if (newUser.avatar) {
+          URL.revokeObjectURL(newUser.avatar);  // Revoke URL when the avatar changes or the component unmounts
+        }
+      };
+    }, [newUser.avatar]);
+
+  // Mengambil data pengguna yang tersimpan dari backend
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      setLoading(true); // Menandakan loading data
+    const fetchSavedAccounts = async () => {
+      setLoading(true);
       try {
-        // Pastikan URL API tidak memiliki garis miring ganda
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
-        // Mengambil data pengguna dari API
-        const response = await axios.get(`${apiUrl}/users`); 
-        // Update state newUser dengan data yang diterima dari API
-        setNewUser({
-          ...response.data,  // Anggap response.data memiliki field yang sesuai dengan newUser
-        }); 
-        console.log('Data pengguna yang disimpan:', response.data);
+        const response = await axios.get(`${apiUrl}/users`);
+        setSavedAccounts(response.data); // Simpan data yang diterima ke dalam state
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        alert('Gagal memuat data pengguna!');
+        console.error("Error fetching saved accounts:", error);
+        alert("Gagal memuat akun!");
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
+
+    fetchSavedAccounts(); // Panggil fungsi untuk mengambil data saat komponen dimuat
+  }, []); // useEff
   
-    fetchUserProfile(); // Panggil fetch saat komponen dimuat
-  }, []);
 
    // Menyimpan profil pengguna baru atau memperbarui profil (ADD atau UPDATE)
-   const saveOrUpdateUserProfile = async () => {
+   const saveUserProfile = async () => {
+    // Validasi bahwa semua kolom wajib diisi
+    if (!newUser.username || !newUser.email || !newUser.password) {
+      alert("Semua kolom wajib diisi!");
+      return;  // Jika ada yang kosong, hentikan eksekusi fungsi
+    }
+  
     // Validasi email
     if (!validateEmail(newUser.email)) {
       alert("Email tidak valid!");
       return;
     }
-
-    setLoading(true);
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, "");
-
+  
+    console.log("Data yang dikirim ke API:", newUser);  // Log data untuk debugging
+    setLoading(true);  // Mengatur loading state menjadi true
+  
     try {
-      // Jika ada ID, maka lakukan update (UPDATE)
+      let response;
+  
+      // Jika ID ada, lakukan PUT (update), jika tidak ada ID, lakukan POST (add)
       if (newUser.id) {
-        const response = await axios.put(
-          `${apiUrl}/users/${newUser.id}`,
-          newUser,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        // Lakukan update (PUT)
+        response = await axios.put(`${apiUrl}/users/${newUser.id}`, newUser, {
+          headers: { "Content-Type": "application/json" },
+        });
         alert("Profil berhasil diperbarui!");
-        console.log("Response dari server:", response.data);
       } else {
-        // Jika tidak ada ID, lakukan tambah (ADD)
-        const response = await axios.post(
-          `${apiUrl}/users`,
-          newUser,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
+        // Lakukan tambah (POST)
+        response = await axios.post(`${apiUrl}/users`, newUser, {
+          headers: { "Content-Type": "application/json" },
+        });
         alert("Profil berhasil disimpan!");
-        console.log("Response dari server:", response.data);
       }
+  
+      console.log("Response dari server:", response.data);  // Log response dari API
+  
+      // Perbarui state savedAccounts dengan data terbaru
+      setSavedAccounts((prevAccounts) => {
+        if (newUser.id) {
+          // Jika memperbarui data, perbarui akun di savedAccounts
+          return prevAccounts.map((account) =>
+            account.id === response.data.id ? response.data : account
+          );
+        } else {
+          // Jika menambahkan akun baru, tambahkan ke daftar akun yang disimpan
+          return [...prevAccounts, response.data];
+        }
+      });
+      
     } catch (error) {
-      console.error("Error saving/updating profile:", error);
-      alert("Gagal menyimpan/profil!");
+      console.error("Error saving profile:", error);
+      alert("Gagal menyimpan profil!");
     } finally {
-      setLoading(false);
+      setLoading(false);  // Set loading false setelah operasi selesai
     }
   };
-
-  // Menghapus akun pengguna (DELETE)
-  const deleteUserProfile = async (userId) => {
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, "");
-    setLoading(true);
-
-    try {
-      const response = await axios.delete(`${apiUrl}/users/${userId}`);
-      setSavedAccounts(savedAccounts.filter((account) => account.id !== userId)); // Menghapus akun dari state lokal
-      alert("Akun berhasil dihapus!");
-      console.log("Akun dihapus:", response.data);
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      alert("Gagal menghapus akun!");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
 
   // Fungsi untuk merubah avatar
   const handleAvatarChange = (event) => {
-    setLoading(true);
     const file = event.target.files[0];
     if (file) {
-      setTimeout(() => {
-        setNewUser((prevUser) => ({
-          ...prevUser,
-          avatar: URL.createObjectURL(file), // Simpan URL gambar sementara
-        }));
-        setLoading(false);
-      }, 1000);
+      const blobUrl = URL.createObjectURL(file);  // Create blob URL from selected file
+      setNewUser((prevUser) => ({
+        ...prevUser,
+        avatar: blobUrl,  // Save blob URL as the avatar source
+      }));
     }
   };
 
@@ -244,76 +245,35 @@ const Profile = () => {
 
   console.log(newUser);
 
-  // Fungsi untuk menyimpan profil pengguna
-  const saveUserProfile = async () => {
-    // Validasi email
-    if (!validateEmail(newUser.email)) {
-      alert("Email tidak valid!");
-      return;
-    }
-  
-    // Pastikan URL API tidak memiliki garis miring ganda
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');    
-    console.log("Data yang dikirim ke API:", newUser); // Log data untuk debugging
-  
-    setLoading(true);
-  
-    try {
-      let response;
-      // Mengirim data ke API, POST untuk menambah data baru
-      if (newUser.id) {
-        // Jika ada ID, lakukan update (UPDATE)
-        response = await axios.put(`${apiUrl}/users/${newUser.id}`, newUser, {
-          headers: { "Content-Type": "application/json" },
-        });
-        alert("Profil berhasil diperbarui!");
-      } else {
-        // Jika tidak ada ID, lakukan tambah (ADD)
-        response = await axios.post(`${apiUrl}/users`, newUser, {
-          headers: { "Content-Type": "application/json" },
-        });
-        alert("Profil berhasil disimpan!");
-      }
-      console.log("Response dari server:", response.data);  // Log response untuk debugging
-  
-      // Update savedAccounts dengan data terbaru
-      if (!newUser.id) {
-        // Jika menambahkan akun baru, tambahkan ke daftar akun yang disimpan
-        setSavedAccounts((prevAccounts) => [...prevAccounts, response.data]);
-      } else {
-        // Jika memperbarui akun, perbarui data akun di savedAccounts
-        setSavedAccounts((prevAccounts) =>
-          prevAccounts.map((account) =>
-            account.id === response.data.id ? response.data : account
-          )
-        );
-      }
-  
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      alert("Gagal menyimpan profil!");
-    } finally {
-      setLoading(false);
-    }
-  };
-  
   // Fungsi untuk mengedit akun
   const editAccount = (account) => {
     alert("Edit account: " + account.username);
     setNewUser(account); 
   };
 
-  // Fungsi untuk memilih akun
-  const switchAccount = (account) => {
-    alert("Beralih ke akun" + account.username);
+  // Fungsi untuk delete akun
+  const deleteAccount = async (account) => {
+    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
+    setLoading(true);
+  
+    try {
+      const response = await axios.delete(`${apiUrl}/users/${account.id}`);
+      setSavedAccounts(savedAccounts.filter((acc) => acc.id !== account.id));
+      alert('Akun berhasil dihapus!');
+      console.log('Akun dihapus:', response.data);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Gagal menghapus akun!');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Fungsi untuk menghapus akun
-  const deleteAccount = (account) => {
-    alert("Delete account: " + account.username);
-    // Hapus akun dari daftar
-    setSavedAccounts(savedAccounts.filter(acc => acc.id !== account.id));
+  // Fungsi untuk memilih akun
+  const switchAccount = (account) => {
+    alert("Beralih ke akun " + account.username);
   };
+
 
   return (
     <div className="bg-gray-input min-h-screen text-white relative">
@@ -360,6 +320,7 @@ const Profile = () => {
                 setNewUser({ ...newUser, username: e.target.value })
               }
               name="username"
+              required
             />
             
             {/* Input untuk Email */}
@@ -436,7 +397,6 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Bagian untuk Beralih Akun */}
      {/* Bagian untuk Beralih Akun */}
 <div className="mt-8">
   <h3 className="text-xl font-medium text-white mb-4">Akun Tersimpan</h3>
