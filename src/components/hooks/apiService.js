@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://default-api-url.com';
+const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
 console.log("Requesting URL:", `${apiUrl}/users`);
 
 
@@ -31,7 +31,6 @@ api.interceptors.request.use(
       console.warn('No auth token found, request may fail');
     }
 
-    console.log("Request API URL: ", apiUrl); // Menampilkan URL yang digunakan
 
     return config;
   },
@@ -94,6 +93,20 @@ export const fetchUserData = async (userId) => {
 };
 
 /**
+* Mengambil semua data dari API
+ * @returns {Promise<object[]>} - Data dari server API
+ */
+export const getData = async () => {
+  try {
+    const response = await api.get('/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
+
+/**
  * Update user profile (PUT)
  * @param {string} userId - The ID of the user to update.
  * @param {object} data - The new data for the user profile.
@@ -124,8 +137,8 @@ const saveProfile = async () => {
   const updatedProfile = { username, email, avatar, packageType, isSubscribed };
   
   try {
-    const response = await api.put(`/users/${selectedAccount.id}`, updatedProfile);
-    setSavedAccounts(response.data); // Menyimpan data terbaru di state
+    await api.put(`/users/${selectedAccount.id}`, updatedProfile);
+    dispatch(fetchSavedAccountsThunk()); // Perbarui data melalui Redux
   } catch (error) {
     console.error('Error updating profile:', error);
   }

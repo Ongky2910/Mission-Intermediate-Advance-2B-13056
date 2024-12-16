@@ -14,6 +14,13 @@ import Footer from "../components/common/Footer"; // Mengimpor komponen Footer
 import { useSubscription } from "../components/SubscriptionContext"; // Mengimpor konteks langganan
 import { GoPencil } from "react-icons/go"; // Mengimpor ikon pencil
 import axios from "axios";
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  fetchSavedAccountsThunk,
+
+} from '../components/redux/userSlice';
+import ListView from '../components/common/ListView';
+import api from '../components/hooks/apiService'; 
 
 
 // Komponen untuk input profil
@@ -107,188 +114,162 @@ const ProfileCard = ({ isSubscribed, onSubscribe, onCancel, packageType }) => (
 
 // Komponen utama Profil
 const Profile = () => {
-  const [avatar, setAvatar] = useState(""); // Avatar state
-  const [loading, setLoading] = useState(false); // Loading state
-  const [showPassword, setShowPassword] = useState(false); // Menyembunyikan/menampilkan password
-  const [newUser, setNewUser] = useState({
+  const dispatch = useDispatch();
+  const selectedAccount = useSelector((state) => state.user.selectedAccount);
+  const savedAccounts = useSelector((state) => state.user.savedAccounts);
+  const loading = useSelector((state) => state.user.loading);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // State untuk mengelola form pengguna
+  const [userForm, setUserForm] = useState({
+    id: null,
     username: "",
     email: "",
     password: "",
     avatar: "",
     packageType: "",
     isSubscribed: false,
-  }); // State untuk data pengguna baru
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state untuk memilih avatar
-  const [avatarOptions, setAvatarOptions] = useState([ // Pilihan avatar
-    "src/assets/avatar1.jpg", 
-    "src/assets/avatar2.jpg",
-    "src/assets/avatar3.jpg"
-  ]);
-  const [savedAccounts, setSavedAccounts] = useState([]); // Daftar akun yang disimpan
+  });
+  const [newUser, setNewUser] = useState({}); 
+  const [showPassword, setShowPassword] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState(""); // Mengatur tampilan avatar saat dipilih
+  const [loadingState, setLoadingState] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const profileInputRef = useRef(null);
 
-    // Pastikan URL API tidak memiliki garis miring ganda
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
-
-    // Validasi email menggunakan regex
-    const validateEmail = (email) => {
-      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return regex.test(email);
-    };
-
-    // Cleanup blob URL on component unmount or when avatar changes
-    useEffect(() => {
-      return () => {
-        if (newUser.avatar) {
-          URL.revokeObjectURL(newUser.avatar);  // Revoke URL when the avatar changes or the component unmounts
-        }
-      };
-    }, [newUser.avatar]);
-
-  // Mengambil data pengguna yang tersimpan dari backend
   useEffect(() => {
-    const fetchSavedAccounts = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${apiUrl}/users`);
-        setSavedAccounts(response.data); // Simpan data yang diterima ke dalam state
-      } catch (error) {
-        console.error("Error fetching saved accounts:", error);
-        alert("Gagal memuat akun!");
-      } finally {
-        setLoading(false);
+    if (selectedAccount && profileInputRef.current) {
+      const el = profileInputRef.current;
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
       }
-    };
-
-    fetchSavedAccounts(); // Panggil fungsi untuk mengambil data saat komponen dimuat
-  }, []); // useEff
+    }
+  }, [selectedAccount]);
   
 
-   // Menyimpan profil pengguna baru atau memperbarui profil (ADD atau UPDATE)
-   const saveUserProfile = async () => {
-    // Validasi bahwa semua kolom wajib diisi
-    if (!newUser.username || !newUser.email || !newUser.password) {
-      alert("Semua kolom wajib diisi!");
-      return;  // Jika ada yang kosong, hentikan eksekusi fungsi
-    }
-  
-    // Validasi email
-    if (!validateEmail(newUser.email)) {
-      alert("Email tidak valid!");
-      return;
-    }
-  
-    console.log("Data yang dikirim ke API:", newUser);  // Log data untuk debugging
-    setLoading(true);  // Mengatur loading state menjadi true
-  
-    try {
-      let response;
-  
-      // Jika ID ada, lakukan PUT (update), jika tidak ada ID, lakukan POST (add)
-      if (newUser.id) {
-        // Lakukan update (PUT)
-        response = await axios.put(`${apiUrl}/users/${newUser.id}`, newUser, {
-          headers: { "Content-Type": "application/json" },
-        });
-        alert("Profil berhasil diperbarui!");
-      } else {
-        // Lakukan tambah (POST)
-        response = await axios.post(`${apiUrl}/users`, newUser, {
-          headers: { "Content-Type": "application/json" },
-        });
-        alert("Profil berhasil disimpan!");
+  // Ambil daftar akun saat pertama kali Profile di-mount
+  useEffect(() => {
+    dispatch(fetchSavedAccountsThunk());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedAccount) {
+      setUserForm({
+        username: selectedAccount.username || '',
+        email: selectedAccount.email || '',
+        password: selectedAccount.password || '',
+        avatar: selectedAccount.avatar || '',
+        packageType: selectedAccount.packageType || '',
+        isSubscribed: selectedAccount.isSubscribed || false,
+      }); 
+
+      // Lakukan scroll ke bagian input profil setiap kali akun dipilih
+      setTimeout(() => { // Delay untuk memastikan formulir sudah dirender
+      if (profileInputRef.current) {
+        profileInputRef.current.scrollIntoView({ behavior: "smooth" });
       }
+    }, 100);
+  }
+}, [selectedAccount]);
   
-      console.log("Response dari server:", response.data);  // Log response dari API
   
-      // Perbarui state savedAccounts dengan data terbaru
-      setSavedAccounts((prevAccounts) => {
-        if (newUser.id) {
-          // Jika memperbarui data, perbarui akun di savedAccounts
-          return prevAccounts.map((account) =>
-            account.id === response.data.id ? response.data : account
-          );
-        } else {
-          // Jika menambahkan akun baru, tambahkan ke daftar akun yang disimpan
-          return [...prevAccounts, response.data];
-        }
-      });
-      
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      alert("Gagal menyimpan profil!");
-    } finally {
-      setLoading(false);  // Set loading false setelah operasi selesai
-    }
-  };
-  
-
-  // Fungsi untuk merubah avatar
-  const handleAvatarChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const blobUrl = URL.createObjectURL(file);  // Create blob URL from selected file
-      setNewUser((prevUser) => ({
-        ...prevUser,
-        avatar: blobUrl,  // Save blob URL as the avatar source
-      }));
-    }
-  };
-
-  // Handler untuk perubahan input (username, email)
+  // Handle perubahan input form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewUser((prevUser) => ({
-      ...prevUser,
+    setUserForm((prevForm) => ({
+      ...prevForm,
       [name]: value,
     }));
   };
 
-  console.log(newUser);
-
-  // Fungsi untuk mengedit akun
-  const editAccount = (account) => {
-    alert("Edit account: " + account.username);
-    setNewUser(account); 
+  const handleSaveChanges = () => {
+    // Logika untuk menyimpan data yang diubah
+    console.log("Saving changes", userForm);
+    setIsEditMode(false);
   };
 
-  // Fungsi untuk delete akun
-  const deleteAccount = async (account) => {
-    const apiUrl = import.meta.env.VITE_API_URL.trim().replace(/\/$/, '');
-    setLoading(true);
+  const toggleEditMode = () => {
+    setIsEditMode((prev) => !prev);
+  };
+
+  // Validasi email sederhana
+  const isValidEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
   
+
+  // Fungsi untuk menyimpan atau memperbarui profil pengguna
+  const handleSaveOrUpdateUser = async () => {
+    if (!userForm.username || !userForm.email || !userForm.password) {
+      alert("Semua kolom wajib diisi!");
+      return;
+    }
+
+    if (!isValidEmail(userForm.email)) {
+      alert("Email tidak valid!");
+      return;
+    }
+
+    setLoadingState(true);
+
     try {
-      const response = await axios.delete(`${apiUrl}/users/${account.id}`);
-      setSavedAccounts(savedAccounts.filter((acc) => acc.id !== account.id));
-      alert('Akun berhasil dihapus!');
-      console.log('Akun dihapus:', response.data);
+      let response;
+      if (userForm.id) {
+        response = await api.put(`/users/${userForm.id}`, userForm);
+        alert("Profil berhasil diperbarui!");
+      } else {
+        response = await api.post('/users', userForm);
+        alert("Profil berhasil disimpan!");
+      }
+  
+      console.log("Response server:", response.data);
+  
+      dispatch(fetchSavedAccountsThunk());
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Gagal menghapus akun!');
+      console.error("Gagal menyimpan profil:", error);
+      alert("Gagal menyimpan profil!");
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
   };
 
-  // Fungsi untuk memilih akun
-  const switchAccount = (account) => {
-    alert("Beralih ke akun " + account.username);
+  // Handle perubahan avatar dari input file
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const blobUrl = URL.createObjectURL(file);
+      setAvatarPreview(blobUrl);
+      setUserForm((prevForm) => ({
+        ...prevForm,
+        avatar: blobUrl,
+      }));
+    }
   };
+
+  // Bersihkan URL blob saat komponen di-unmount atau saat avatar berubah
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
 
   return (
     <div className="bg-gray-input min-h-screen text-white relative">
       <Navbar /> {/* Menampilkan Navbar */}
-
-      <div id="inputForm" className="max-w-6xl mx-auto p-6">
+      <ListView />
+      <div ref={profileInputRef} id="inputForm" className="max-w-6xl mx-auto p-6">
         <div className="flex flex-col md:flex-row items-center justify-between">
           {/* Bagian kiri untuk input profil */}
           <div className="w-full md:w-1/2 md:mr-4 mb-6 md:mb-0">
             <h2 className="text-2xl font-medium text-gray-50 mb-6">Profil Saya</h2>
-
+  
             {/* Avatar Section */}
             <div className="flex items-center mb-6">
               <img
-                src={newUser.avatar || "src/assets/27470334_7309681.jpg"}  // Default image jika avatar tidak ada
+                src={userForm.avatar || "src/assets/27470334_7309681.jpg"}
                 alt="Profile"
                 className="w-20 h-20 rounded-full mr-3"
               />
@@ -308,36 +289,38 @@ const Profile = () => {
                   className="hidden"
                   id="avatar-upload"
                 />
-                {loading && <p>Uploading...</p>}
+                {loadingState && <p>Uploading...</p>}
               </div>
             </div>
-
+  
             {/* Input untuk Nama Pengguna */}
             <ProfileInput
               label="Nama Pengguna"
-              value={newUser.username || ''}
-              setValue={(e) =>
-                setNewUser({ ...newUser, username: e.target.value })
-              }
+              value={userForm.username || ''}
+              setValue={handleInputChange}
               name="username"
               required
+              disabled={!isEditMode}
             />
-            
+  
             {/* Input untuk Email */}
             <ProfileInput
               label="Email"
-              value={newUser.email || ''}
+              value={userForm.email || ''}
               setValue={handleInputChange}
               name="email"
+              disabled={!isEditMode} 
             />
+  
             {/* Input untuk Kata Sandi */}
             <div className="mb-5">
               <ProfileInput
                 label="Kata Sandi"
-                value={newUser.password || ''}
+                value={userForm.password || ''}
                 setValue={handleInputChange}
                 type={showPassword ? "text" : "password"}
                 name="password"
+                disabled={!isEditMode}
               />
               <button
                 onClick={() => setShowPassword(!showPassword)}
@@ -346,28 +329,28 @@ const Profile = () => {
                 {showPassword ? "Hide" : "Show"} Password
               </button>
             </div>
-
+  
             {/* Tombol untuk menyimpan profil */}
             <Button
               text="Simpan"
               color="blue"
               variant="default"
               className="w-32"
-              onClick={saveUserProfile}
+              onClick={handleSaveOrUpdateUser}
             />
             {loading && <p>Saving...</p>}
           </div>
-
+  
           {/* Bagian kanan untuk info langganan */}
           <div className="mt-4 md:ml-20 md:mt-0 md:w-1/2 md:mb-20">
             <ProfileCard
-              isSubscribed={newUser.isSubscribed}
-              packageType={newUser.packageType}
+              isSubscribed={userForm.isSubscribed}
+              packageType={userForm.packageType}
             />
           </div>
         </div>
       </div>
-
+  
       {/* Modal Pemilihan Avatar */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -382,7 +365,7 @@ const Profile = () => {
                   className="w-16 h-16 cursor-pointer rounded-full hover:border-2 hover:border-blue-500"
                   onClick={() => {
                     setAvatar(avatarUrl);
-                    setIsModalOpen(false); // Menutup modal
+                    setIsModalOpen(false);
                   }}
                 />
               ))}
@@ -396,52 +379,16 @@ const Profile = () => {
           </div>
         </div>
       )}
+  
+ {/* Bagian Akun yang Tersimpan dari ListView */}
+ <div className="mt-8">
+        <h3 className="text-xl font-medium text-white mb-4">Daftar Akun</h3>
+        <ListView />
+      </div>
 
-     {/* Bagian untuk Beralih Akun */}
-<div className="mt-8">
-  <h3 className="text-xl font-medium text-white mb-4">Akun Tersimpan</h3>
-  <div className="flex flex-col space-y-2">
-    {savedAccounts.length === 0 ? (
-      <p className="text-gray-400">Tidak ada akun yang tersimpan.</p>
-    ) : (
-      savedAccounts.map((account) => (
-        <div
-          key={account.id || account.username}
-          className="bg-neutral-700 p-4 rounded-md flex justify-between items-center"
-        >
-          <div className="flex items-center">
-            <img
-              src={account.avatar || "src/assets/27470334_7309681.jpg"} // Avatar yang disimpan
-              alt="Avatar"
-              className="w-12 h-12 rounded-full mr-3"
-            />
-          </div>
-          <div>
-            <p className="text-white font-semibold">{account.username}</p>
-            <p className="text-gray-400">Paket: {account.packageType || "Belum Berlangganan"}</p>
-            <p className="text-gray-400">Status: {account.isSubscribed ? "Berlangganan" : "Belum Berlangganan"}</p>
-          </div>
-          <div className="flex space-x-2">
-            <button className="text-green-500 hover:underline" onClick={() => editAccount(account)}>
-              Edit
-            </button>
-            <button className="text-blue-500 hover:underline" onClick={() => switchAccount(account)}>
-              Pilih
-            </button>
-            <button className="text-red-500 hover:underline" onClick={() => deleteAccount(account)}>
-              Hapus
-            </button>
-          </div>
-        </div>
-      ))
-    )}
-  </div>
-</div>
-
-<Footer /> {/* Menampilkan Footer */}
-
+      <Footer />
     </div>
   );
-};
-
+}
+  
 export default Profile;

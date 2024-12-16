@@ -10,11 +10,13 @@ import Subscription from "./pages/Subscription";
 import Payment from "./pages/Payment";
 import { SubscriptionProvider } from './components/SubscriptionContext'
 import { Provider } from 'react-redux';
+import store from './components/redux/store';
 import "./index.css";
 
 const App = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   return (
+    <Provider store={store}>
     <SubscriptionProvider>
     <Router>
       <Routes>
@@ -30,6 +32,7 @@ const App = () => {
       </Routes>
     </Router>
     </SubscriptionProvider>
+    </Provider>
   );
 };
 
